@@ -3,7 +3,7 @@
 #include <linux/pci.h>
 
 
-static int hello_probe(struct pci_dev pdev, const struct pci_device_id *id)
+static int hello_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 {
 	dev_info(&pdev->dev, "Hello device bound\n");
 	return 0;
@@ -15,25 +15,26 @@ static void hello_remove(struct pci_dev *pdev)
 }
 
 struct pci_device_id hello_id_table[] = {
-	PCI_DEVICE(0x1337,0x0001),
-	{},
+	{PCI_DEVICE(0x1337,0x0001)},
+	{}
 };
 
-struct pci_driver hello_pci_driver {
+struct pci_driver hello_pci_driver = {
 	.probe = hello_probe,
 	.remove = hello_remove,
 	.id_table = hello_id_table
 };
 
-int hello_init()
+static int hello_init(void)
 {
 	return 0;
 }
 
-void hello_exit()
+static void hello_exit(void)
 {
 	return;
 }
 
 module_init(hello_init);
 module_exit(hello_exit);
+MODULE_DEVICE_TABLE(pci, hello_id_table);
